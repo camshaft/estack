@@ -39,5 +39,7 @@ normailze(Fun) when is_atom(Fun) ->
   fun Fun:execute/2;
 normailze(Fun) when is_function(Fun) ->
   Fun;
+normailze({Module, Fun, Arity}) ->
+  fun Module:Fun/Arity;
 normailze({Module, Fun}) ->
   fun Module:Fun/2.
