@@ -1,28 +1,13 @@
-REBAR = rebar
+PROJECT = estack
 
-default: compile
+default: all
 
-all: deps compile
-
-compile:
-	$(REBAR) compile
-
-deps:
-	$(REBAR) get-deps
-
-clean:
-	$(REBAR) clean
-
-distclean: clean 
-	$(REBAR) delete-deps
-
+## TODO don't use rebar to run eunit tests
 test:
-	$(REBAR) skip_deps=true eunit
+	rebar skip_deps=true eunit
 
-docs: deps
-	$(REBAR) skip_deps=true doc
+## TODO add horse perf testing
 
-dialyzer: compile
-	@dialyzer -Wno_return -c ebin
+include erlang.mk
 
-.PHONY: all deps test
+.PHONY: default test

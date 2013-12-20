@@ -21,9 +21,9 @@ nested_test() ->
       ?debugMsg("nested: 1 start"),
       {ok, _Req, _Env}
     end,
-    fun(_Req, _Env, Stack) ->
+    fun(_Req, _Env, Next) ->
       ?debugMsg("nested: 2 start"),
-      {ok, _Req2, _Env2} = estack:execute(_Req, _Env, Stack),
+      {ok, _Req2, _Env2} = Next(_Req, _Env),
       ?debugMsg("nested: 2 end"),
       {ok, _Req2, _Env2}
     end,
@@ -31,9 +31,9 @@ nested_test() ->
       ?debugMsg("nested: 3 start"),
       {ok, _Req, _Env}
     end,
-    fun(_Req, _Env, Stack) ->
+    fun(_Req, _Env, Next) ->
       ?debugMsg("nested: 4 start"),
-      {ok, _Req2, _Env2} = estack:execute(_Req, _Env, Stack),
+      {ok, _Req2, _Env2} = Next(_Req, _Env),
       ?debugMsg("nested: 4 end"),
       {ok, _Req, _Env}
     end,
@@ -64,9 +64,9 @@ nested_halt_test() ->
       ?debugMsg("nested-halt: 1 start"),
       {ok, _Req, _Env}
     end,
-    fun(_Req, _Env, Stack) ->
+    fun(_Req, _Env, Next) ->
       ?debugMsg("nested-halt: 2 start"),
-      {ok, _Req2, _Env2} = estack:execute(_Req, _Env, Stack),
+      {ok, _Req2, _Env2} = Next(_Req, _Env),
       ?debugMsg("nested-halt: 2 end"),
       {ok, _Req2, _Env2}
     end,
@@ -74,9 +74,9 @@ nested_halt_test() ->
       ?debugMsg("nested-halt: 3 start"),
       {ok, _Req, _Env}
     end,
-    fun(_Req, _Env, Stack) ->
+    fun(_Req, _Env, Next) ->
       ?debugMsg("nested-halt: 4 start"),
-      {ok, _Req2, _Env2} = estack:execute(_Req, _Env, Stack),
+      {ok, _Req2, _Env2} = Next(_Req, _Env),
       ?debugMsg("nested-halt: 4 end"),
       {ok, _Req, _Env}
     end,
@@ -93,9 +93,9 @@ timer_test() ->
       ?debugMsg("timer: 1 start"),
       {ok, _Req, _Env}
     end,
-    fun(_Req, _Env, Stack) ->
+    fun(_Req, _Env, Next) ->
       ?debugMsg("timer: 2 start"),
-      {Time, {ok, _Req2, _Env2}} = timer:tc(estack, execute, [_Req, _Env, Stack]),
+      {Time, {ok, _Req2, _Env2}} = timer:tc(Next, [_Req, _Env]),
       ?debugMsg("timer: 2 end"),
       ?debugVal(Time),
       {ok, _Req2, _Env2}
@@ -104,9 +104,9 @@ timer_test() ->
       ?debugMsg("timer: 3 start"),
       {ok, _Req, _Env}
     end,
-    fun(_Req, _Env, Stack) ->
+    fun(_Req, _Env, Next) ->
       ?debugMsg("timer: 4 start"),
-      {ok, _Req2, _Env2} = estack:execute(_Req, _Env, Stack),
+      {ok, _Req2, _Env2} = Next(_Req, _Env),
       ?debugMsg("timer: 4 end"),
       {ok, _Req, _Env}
     end
@@ -120,11 +120,11 @@ memoize_test() ->
       ?debugMsg("memoize: 1 start"),
       {ok, _Req, _Env}
     end,
-    fun(Req, Env, Stack) ->
+    fun(Req, Env, Next) ->
       ?debugMsg("memoize: 2 start"),
       case get(Req) of
         undefined ->
-          {ok, Req2, Env2} = estack:execute(Req, Env, Stack),
+          {ok, Req2, Env2} = Next(Req, Env),
           ?debugMsg("memoize: 2 end"),
           put(Req, Req2),
           {ok, Req2, Env2};
@@ -137,9 +137,9 @@ memoize_test() ->
       ?debugMsg("memoize: 3 start"),
       {ok, _Req, _Env}
     end,
-    fun(_Req, _Env, Stack) ->
+    fun(_Req, _Env, Next) ->
       ?debugMsg("memoize: 4 start"),
-      {ok, _Req2, _Env2} = estack:execute(_Req, _Env, Stack),
+      {ok, _Req2, _Env2} = Next(_Req, _Env),
       ?debugMsg("memoize: 4 end"),
       {ok, _Req2, _Env2}
     end,
